@@ -8,8 +8,7 @@ from memoization import cached
 
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
-
-from tap_aircall.auth import aircallAuthenticator
+from singer_sdk.authenticators import BasicAuthenticator
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
@@ -31,10 +30,13 @@ class aircallStream(RESTStream):
     next_page_token_jsonpath = "$.next_page"  # Or override `get_next_page_token`.
 
     @property
-    @cached
-    def authenticator(self) -> aircallAuthenticator:
+    def authenticator(self) -> BasicAuthenticator:
         """Return a new authenticator object."""
-        return aircallAuthenticator.create_for_stream(self)
+        return BasicAuthenticator.create_for_stream(
+            self,
+            username=self.config.get("username"),
+            password=self.config.get("password"),
+        )
 
     @property
     def http_headers(self) -> dict:
@@ -42,6 +44,8 @@ class aircallStream(RESTStream):
         headers = {}
         if "user_agent" in self.config:
             headers["User-Agent"] = self.config.get("user_agent")
+        # If not using an authenticator, you may also provide inline auth headers:
+        # headers["Private-Token"] = self.config.get("auth_token")
         return headers
 
     def get_next_page_token(
