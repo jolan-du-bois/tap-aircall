@@ -1,15 +1,13 @@
 """REST client handling, including aircallStream base class."""
 
-import requests
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Iterable
+from typing import Any, Dict, Optional, Iterable
+from urllib.parse import urlparse, parse_qs
 
-from memoization import cached
-
+import requests
+from singer_sdk.authenticators import BasicAuthenticator
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
-from singer_sdk.authenticators import BasicAuthenticator
-
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
@@ -17,25 +15,18 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 class aircallStream(RESTStream):
     """aircall stream class."""
 
-    # TODO: Set the API's base URL here:
-    url_base = "https://api.mysample.com"
-
-    # OR use a dynamic url_base:
-    # @property
-    # def url_base(self) -> str:
-    #     """Return the API URL root, configurable via tap settings."""
-    #     return self.config["api_url"]
+    url_base = "https://api.aircall.io/"
 
     records_jsonpath = "$[*]"  # Or override `parse_response`.
-    next_page_token_jsonpath = "$.next_page"  # Or override `get_next_page_token`.
+    next_page_token_jsonpath = "$.meta.next_page_link"  # Or override `get_next_page_token`.
 
     @property
     def authenticator(self) -> BasicAuthenticator:
         """Return a new authenticator object."""
         return BasicAuthenticator.create_for_stream(
             self,
-            username=self.config.get("username"),
-            password=self.config.get("password"),
+            username=self.config.get("api_id"),
+            password=self.config.get("api_token"),
         )
 
     @property
@@ -49,7 +40,7 @@ class aircallStream(RESTStream):
         return headers
 
     def get_next_page_token(
-        self, response: requests.Response, previous_token: Optional[Any]
+            self, response: requests.Response, previous_token: Optional[Any]
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
         # TODO: If pagination is required, return a token which can be used to get the
@@ -67,19 +58,24 @@ class aircallStream(RESTStream):
         return next_page_token
 
     def get_url_params(
-        self, context: Optional[dict], next_page_token: Optional[Any]
+            self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
         if next_page_token:
-            params["page"] = next_page_token
+            # format next_page_token: "https://api.aircall.io/v1/calls?page=2&per_page=20"
+            # page & per_page require int params
+            # extract query from next_page_token string
+            next_page_token_query: Dict = parse_qs(urlparse(next_page_token).query)
+            params["page"] = int(next_page_token_query.get('page', ['1'])[0])  # Default si 1
+            params["per_page"] = int(next_page_token_query.get('per_page', ['20'])[0])  # Default is 20
         if self.replication_key:
             params["sort"] = "asc"
             params["order_by"] = self.replication_key
         return params
 
     def prepare_request_payload(
-        self, context: Optional[dict], next_page_token: Optional[Any]
+            self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request.
 
@@ -91,6 +87,9 @@ class aircallStream(RESTStream):
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result rows."""
         # TODO: Parse response body and return a set of records.
+
+        self.logger.info(f"meta: {list(extract_jsonpath('$.meta.[*]', input=response.json()))}")
+
         yield from extract_jsonpath(self.records_jsonpath, input=response.json())
 
     def post_process(self, row: dict, context: Optional[dict]) -> dict:
