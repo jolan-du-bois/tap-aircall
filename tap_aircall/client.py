@@ -70,8 +70,12 @@ class aircallStream(RESTStream):
             params["page"] = int(next_page_token_query.get('page', ['1'])[0])  # Default si 1
             params["per_page"] = int(next_page_token_query.get('per_page', ['20'])[0])  # Default is 20
         if self.replication_key:
-            params["sort"] = "asc"
-            params["order_by"] = self.replication_key
+            params["order"] = "asc"
+            # params["order_by"] = self.replication_key
+        starting_time = self.get_starting_timestamp(context)
+        if starting_time:
+            params["from"] = str(round(starting_time.timestamp()))
+
         return params
 
     def prepare_request_payload(
