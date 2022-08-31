@@ -1,4 +1,5 @@
-from singer_sdk.typing import PropertiesList, Property, IntegerType, StringType, BooleanType, ArrayType, ObjectType
+from singer_sdk.typing import PropertiesList, Property, IntegerType, StringType, BooleanType, ArrayType, ObjectType, \
+    EmailType, DateTimeType
 
 number_properties = PropertiesList(
     Property("id", IntegerType, required=True, description="Unique identifier for the Number."),
@@ -57,8 +58,8 @@ user_properties = PropertiesList(
     Property("id", IntegerType, required=True, description="Unique identifier for the User."),
     Property("direct_link", StringType, description="Direct API URL."),
     Property("name", StringType, description="Full name of the User. Results of first_name last_name."),
-    Property("email", StringType, description="Email of the User."),
-    Property("created_at", StringType, description="Timestamp when the User was created, in UTC."),
+    Property("email", EmailType, description="Email of the User."),
+    Property("created_at", DateTimeType, description="Timestamp when the User was created, in UTC."),
     Property("available", BooleanType,
              description="Current availability status of the User, based on their working hours."),
     Property("availability_status", StringType,
