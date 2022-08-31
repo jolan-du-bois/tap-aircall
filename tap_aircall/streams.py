@@ -1,62 +1,36 @@
 """Stream type classes for tap-aircall."""
 
-from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Iterable
-
-from singer_sdk import typing as th  # JSON Schema typing helpers
+from typing import Optional
 
 from tap_aircall.client import aircallStream
-
-# TODO: Delete this is if not using json files for schema definition
-SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
-# TODO: - Override `UsersStream` and `GroupsStream` with your own stream definition.
-#       - Copy-paste as many times as needed to create multiple stream types.
+from .schemas import user_properties
 
 
 class UsersStream(aircallStream):
     """Define custom stream."""
     name = "users"
-    path = "/users"
+    path = "v1/users"
     primary_keys = ["id"]
-    replication_key = None
-    # Optionally, you may also use `schema_filepath` in place of `schema`:
-    # schema_filepath = SCHEMAS_DIR / "users.json"
-    schema = th.PropertiesList(
-        th.Property("name", th.StringType),
-        th.Property(
-            "id",
-            th.StringType,
-            description="The user's system ID"
-        ),
-        th.Property(
-            "age",
-            th.IntegerType,
-            description="The user's age in years"
-        ),
-        th.Property(
-            "email",
-            th.StringType,
-            description="The user's email address"
-        ),
-        th.Property("street", th.StringType),
-        th.Property("city", th.StringType),
-        th.Property(
-            "state",
-            th.StringType,
-            description="State name in ISO 3166-2 format"
-        ),
-        th.Property("zip", th.StringType),
-    ).to_dict()
+    replication_key = "created_at"
+    schema = user_properties.to_dict()
+    records_jsonpath = "$.users[*]"  # Or override `parse_response`.
+
+    def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
+        """Return a context dictionary for child streams."""
+        return {
+            "user_id": record["id"]
+        }
 
 
-class GroupsStream(aircallStream):
+class UserStream(aircallStream):
     """Define custom stream."""
-    name = "groups"
-    path = "/groups"
+    name = "user"
+    parent_stream_type = UsersStream
+    path = "v1/users/{user_id}"
+
     primary_keys = ["id"]
-    replication_key = "modified"
-    schema = th.PropertiesList(
-        th.Property("name", th.StringType),
-        th.Property("id", th.StringType),
-        th.Property("modified", th.DateTimeType),
-    ).to_dict()
+    replication_key = "created_at"
+    schema = user_properties.to_dict()
+    records_jsonpath = "$.users[*]"  # Or override `parse_response`.
+    #  not to store any state bookmarks for the child stream
+    state_partitioning_keys = []
