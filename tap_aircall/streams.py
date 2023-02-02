@@ -3,7 +3,7 @@
 from typing import Optional
 
 from tap_aircall.client import aircallStream
-from .schemas import user_properties
+from .schemas import user_properties, call_properties
 
 
 class UsersStream(aircallStream):
@@ -21,6 +21,16 @@ class UsersStream(aircallStream):
             "user_id": record["id"]
         }
 
+class CallsStream(aircallStream):
+    """Define custom stream."""
+    name = "calls"
+    path = "v1/calls"
+    primary_keys = ["id"]
+    replication_key = "id"
+    schema = call_properties.to_dict()
+    print("HEREEE")
+    print(schema)
+    records_jsonpath = "$.calls[*]"  # Or override `parse_response`.
 
 class UserStream(aircallStream):
     """Define custom stream."""

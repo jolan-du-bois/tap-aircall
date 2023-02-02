@@ -6,15 +6,14 @@ from singer_sdk import Tap, Stream
 from singer_sdk import typing as th  # JSON schema typing helpers
 # TODO: Import your custom stream types here:
 from tap_aircall.streams import (
-    aircallStream,
+    CallsStream,
     UsersStream,
-    GroupsStream,
 )
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
+    CallsStream,
     UsersStream,
-    GroupsStream,
 ]
 
 
@@ -25,15 +24,27 @@ class Tapaircall(Tap):
     # TODO: Update this section with the actual config values you expect:
     config_jsonschema = th.PropertiesList(
         th.Property(
-            "auth_token",
+            "api_token",
             th.StringType,
             required=True,
             description="The token to authenticate against the API service"
         ),
         th.Property(
+            "api_id",
+            th.StringType,
+            required=True,
+            description="The id to authenticate against the API service"
+        ),
+        th.Property(
+            "auth_token",
+            th.StringType,
+            # required=True,
+            description="The token to authenticate against the API service"
+        ),
+        th.Property(
             "project_ids",
             th.ArrayType(th.StringType),
-            required=True,
+            # required=True,
             description="Project IDs to replicate"
         ),
         th.Property(
