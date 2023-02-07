@@ -9,7 +9,7 @@ from singer_sdk.tap_base import CliTestOptionValue
 from singer_sdk.cli import common_options
 
 CONFIG_OPTION = click.option(
-    "-c",
+    "-c", "--config",
     multiple=True,
     help="Configuration file location or 'ENV' to use environment variables.",
     type=click.STRING,
@@ -42,7 +42,7 @@ PROPERTIES_OPTION = click.option(
     type=click.Path(),
 )
 STATE_OPTION = click.option(
-    "--state",
+    "--state", "-s",
     help="Use a bookmarks file for incremental replication.",
     type=click.Path(),
 )
@@ -52,6 +52,8 @@ class _Tap(Tap):
     Monkeypatches the Tap.cli to accept:
     1. -c arg as the same as --config
         - If both are provided, --config arg is accepted first
+    1. -s arg as the same as --state
+        - If both are provided, --state arg is accepted first
     2. --properties arg as the same as --catalog, but deprecated
         - If both are provided, --catalog arg is accepted first
     """
@@ -66,7 +68,6 @@ class _Tap(Tap):
         @common_options.PLUGIN_VERSION
         @common_options.PLUGIN_ABOUT
         @common_options.PLUGIN_ABOUT_FORMAT
-        @common_options.PLUGIN_CONFIG
         @CONFIG_OPTION
         @DISCOVER_OPTION
         @TEST_OPTION
@@ -83,7 +84,6 @@ class _Tap(Tap):
             discover: bool = False,
             test: CliTestOptionValue = CliTestOptionValue.Disabled,
             config: Tuple[str, ...] = (),
-            c: Tuple[str, ...] = (),
             state: str = None,
             catalog: str = None,
             properties: str = None,
@@ -92,17 +92,18 @@ class _Tap(Tap):
             """Handle command line execution.
 
             Args:
-                version: Display the package version.
-                about: Display package metadata and settings.
-                discover: Run the tap in discovery mode.
-                test: Test connectivity by syncing a single record and exiting.
-                format: Specify output style for `--about`.
-                config: Configuration file location or 'ENV' to use environment
+                --version: Display the package version.
+                --about: Display package metadata and settings.
+                --discover: Run the tap in discovery mode.
+                --test: Test connectivity by syncing a single record and exiting.
+                --format: Specify output style for `--about`.
+                --config: Configuration file location or 'ENV' to use environment
                     variables. Accepts multiple inputs as a tuple.
-                c: Same as `config`
-                catalog: Use a Singer catalog file with the tap.
-                properties: Same as, but deprecated in favour of `catalog`.
-                state: Use a bookmarks file for incremental replication.
+                -c: Same as `config`
+                --catalog: Use a Singer catalog file with the tap.
+                --properties: Same as, but deprecated in favour of `catalog`.
+                --state: Use a bookmarks file for incremental replication.
+                -s: Same as `state`
 
             Raises:
                 FileNotFoundError: If the config file does not exist.
@@ -110,8 +111,6 @@ class _Tap(Tap):
             if version:
                 cls.print_version()
                 return
-
-            config_to_use = config or c
 
             if not about:
                 cls.print_version(print_fn=cls.logger.info)
@@ -126,7 +125,7 @@ class _Tap(Tap):
 
             parse_env_config = False
             config_files: List[PurePath] = []
-            for config_path in config_to_use:
+            for config_path in config:
                 if config_path == "ENV":
                     # Allow parse from env vars:
                     parse_env_config = True
