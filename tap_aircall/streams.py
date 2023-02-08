@@ -26,7 +26,7 @@ class CallsStream(aircallStream):
     name = "calls"
     path = "v1/calls"
     primary_keys = ["id"]
-    replication_key = "id"
+    replication_key = "started_at"
     schema = call_properties.to_dict()
     records_jsonpath = "$.calls[*]"  # Or override `parse_response`.
 
