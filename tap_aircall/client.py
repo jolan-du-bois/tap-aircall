@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional, Iterable
 from urllib.parse import urlparse, parse_qs
 
 import requests
+from datetime import datetime
 from singer_sdk.authenticators import BasicAuthenticator
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
@@ -72,7 +73,7 @@ class aircallStream(RESTStream):
         if self.replication_key:
             params["order"] = "asc"
             # params["order_by"] = self.replication_key
-        starting_time = self.get_starting_timestamp(context)
+        starting_time = self.get_starting_timestamp(context) if type(context) is datetime else None
         if starting_time:
             params["from"] = str(round(starting_time.timestamp()))
 
