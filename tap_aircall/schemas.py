@@ -157,7 +157,7 @@ call_properties = PropertiesList(
     Property("comments", ArrayType(ObjectType(
         Property("id", IntegerType, description="Unique identifier for the Comment."),
         Property("content", StringType, description="Content of the Comment, written by Agent or via Public API."),
-        Property("posted_at", StringType, description="Timestamp of when the Comment was created."),
+        Property("posted_at", IntegerType, description="UNIX timestamp when the Comment was created, in UTC."),
         Property("posted_by", user_properties, description="User object who created the Comment.")
     ))),
     Property("tags", ArrayType(tag_properties), description="Tags added to this Call by Users."),

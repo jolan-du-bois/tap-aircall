@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='tap-aircall',
-      version='0.0.5',
+      version='0.0.7',
       description='Singer.io tap for extracting data from the Aircall API',
       author='Pathlight',
       url='https://www.pathlight.com',
