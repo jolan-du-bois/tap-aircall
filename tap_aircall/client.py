@@ -99,5 +99,9 @@ class aircallStream(RESTStream):
 
     def post_process(self, row: dict, context: Optional[dict]) -> dict:
         """As needed, append or transform raw data to match expected structure."""
-        # TODO: Delete this method if not needed.
+        # convert these values from type timestamp to datetime.
+        datetime_types = ["answered_at", "started_at", "ended_at"]
+        for key in datetime_types:
+            if key in row and row.get(key):
+                row[key] = datetime.fromtimestamp(row.get(key))
         return row

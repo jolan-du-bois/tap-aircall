@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tap-aircall"
-version = "0.0.7"
+version = "0.0.8"
 description = "`tap-aircall` is a Singer tap for aircall, built with the Meltano SDK for Singer Taps."
 authors = ["FirstName LastName"]
 keywords = [

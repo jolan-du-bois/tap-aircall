@@ -127,9 +127,9 @@ tag_properties = PropertiesList(
 call_properties = PropertiesList(
     Property("id", IntegerType, required=True, description="Unique identifier for the Call."),
     Property("direct_link", StringType, description="Direct API URL."),
-    Property("started_at", IntegerType, description="UNIX timestamp when the Call started, in UTC."),
-    Property("answered_at", IntegerType, description="UNIX timestamp when the Call has been answered, in UTC."),
-    Property("ended_at", IntegerType, description="UNIX timestamp when the Call ended, in UTC."),
+    Property("started_at", DateTimeType, description="Timestamp when the Call started, in UTC."),
+    Property("answered_at", DateTimeType, description="Timestamp when the Call has been answered, in UTC."),
+    Property("ended_at", DateTimeType, description="Timestamp when the Call ended, in UTC."),
     Property("duration", IntegerType,
              description="Duration of the Call in seconds. This field is computed by started_at - ended_at."),
     Property("status", StringType, description="Current status of the Call. Can be initial, answered or done."),
