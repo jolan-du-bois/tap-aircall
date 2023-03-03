@@ -5,10 +5,12 @@ from typing import Any, Dict, Optional, Iterable
 from urllib.parse import urlparse, parse_qs
 
 import requests
+import sys
 from datetime import datetime
 from singer_sdk.authenticators import BasicAuthenticator
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
+from singer_sdk.exceptions import RetriableAPIError
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
@@ -105,3 +107,13 @@ class aircallStream(RESTStream):
             if key in row and row.get(key):
                 row[key] = datetime.fromtimestamp(row.get(key))
         return row
+    
+    def validate_response(self, response: requests.Response) -> None:
+        try:
+            super().validate_response(response)
+        except RetriableAPIError as e:
+            if e.response.status_code == 429:
+                self.logger.error(f"(accepted intermittent error) Rate limit error: {e}")
+                sys.exit(1001)
+            else:
+                raise e
