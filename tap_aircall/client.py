@@ -110,16 +110,19 @@ class aircallStream(RESTStream):
                 row[key] = datetime.fromtimestamp(row.get(key))
         return row
     
+    """
+    # This code-block is not required when backoff_wait_generator code-block is active
     def validate_response(self, response: requests.Response) -> None:
         try:
             super().validate_response(response)
         except RetriableAPIError as e:
              #Capture other Retriable Errors
-            if e.response.status_code != 429:
-                self.logger.error(f"(accepted intermittent error) Non-Rate limit error: {e}")
+            if e.response.status_code == 429:
+                self.logger.error(f"(accepted intermittent error) Rate limit error: {e}")
                 sys.exit(1001)
             else:
                 raise e
+    """
     
     #https://sdk.meltano.com/en/latest/code_samples.html#custom-backoff
     #FUJ-4120, introducing custom backoff for Aircall taps
