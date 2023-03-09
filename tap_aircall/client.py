@@ -1,11 +1,13 @@
 """REST client handling, including aircallStream base class."""
 
 from pathlib import Path
-from typing import Any, Dict, Optional, Iterable
+from typing import Any, Dict, Optional, Iterable, Callable, Generator
 from urllib.parse import urlparse, parse_qs
 
 import requests
 import sys
+import backoff
+
 from datetime import datetime
 from singer_sdk.authenticators import BasicAuthenticator
 from singer_sdk.helpers.jsonpath import extract_jsonpath
@@ -108,12 +110,26 @@ class aircallStream(RESTStream):
                 row[key] = datetime.fromtimestamp(row.get(key))
         return row
     
+    """
+    # This code-block is not required when backoff_wait_generator code-block is active
     def validate_response(self, response: requests.Response) -> None:
         try:
             super().validate_response(response)
         except RetriableAPIError as e:
+             #Capture other Retriable Errors
             if e.response.status_code == 429:
                 self.logger.error(f"(accepted intermittent error) Rate limit error: {e}")
                 sys.exit(1001)
             else:
                 raise e
+    """
+    
+    #https://sdk.meltano.com/en/latest/code_samples.html#custom-backoff
+    #FUJ-4120, introducing custom backoff for Aircall taps
+    
+    #https://developer.aircall.io/tutorials/logging-calls/#:~:text=Aircall%20Public%20API%20is%20rate,will%20be%20blocked%20by%20Aircall.
+    #Aircall allows 60 requests per minute, generating a wait time of 90 seconds to avoid error caused by RateLimit exception
+    def backoff_wait_generator(max_time: int) -> Callable[..., Generator[int, Any, None]]:
+        return backoff.constant(interval=90)
+    
+    
