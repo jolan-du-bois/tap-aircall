@@ -28,7 +28,7 @@ class CallsStream(aircallStream):
     primary_keys = ["id"]
     
     #FUJ-4262, Aircall tap for Wine Enthusiast is not fetching data beyond 3/20
-    # Changed replication_key to look at started date/time vs call id
+    # Changed replication_key to look at call start date/time vs call id
     #replication_key = "id"
     replication_key = "started_at"
     
