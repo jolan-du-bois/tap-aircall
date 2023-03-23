@@ -95,6 +95,15 @@ class aircallStream(RESTStream):
             params["from"] = time.time()
 
         return params
+    
+    def prepare_request_payload(
+        self, context: Optional[dict], next_page_token: Optional[Any]
+    ) -> Optional[dict]:
+        """Prepare the data payload for the REST API request.
+        By default, no payload will be sent (return None).
+        """
+        # TODO: Delete this method if no payload is required. (Most REST APIs.)
+        return None
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result rows."""
