@@ -97,7 +97,7 @@ class aircallStream(RESTStream):
         return params
     
     def prepare_request_payload(
-        self, context: Optional[dict], next_page_token: Optional[Any]
+            self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request.
         By default, no payload will be sent (return None).
