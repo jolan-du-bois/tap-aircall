@@ -26,7 +26,12 @@ class CallsStream(aircallStream):
     name = "calls"
     path = "v1/calls"
     primary_keys = ["id"]
-    replication_key = "id"
+    
+    #FUJ-4262, Aircall tap for Wine Enthusiast is not fetching data beyond 3/20
+    # Changed replication_key to look at started date/time vs call id
+    #replication_key = "id"
+    replication_key = "started_at"
+    
     schema = call_properties.to_dict()
     records_jsonpath = "$.calls[*]"  # Or override `parse_response`.
 
