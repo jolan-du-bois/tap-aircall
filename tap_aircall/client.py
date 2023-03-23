@@ -5,7 +5,7 @@ from typing import Any, Dict, Optional, Iterable, Callable, Generator
 from urllib.parse import urlparse, parse_qs
 
 import requests
-import sys
+import time
 import backoff
 
 from datetime import datetime
@@ -77,17 +77,29 @@ class aircallStream(RESTStream):
         if self.replication_key:
             params["order"] = "asc"
             # params["order_by"] = self.replication_key
-        starting_time = self.get_starting_timestamp(context) if type(context) is datetime else None
-        if starting_time:
-            params["from"] = str(round(starting_time.timestamp()))
+        
+        #FUJ-4262, Aircall tap for Wine Enthusiast is not fetching data beyond 3/20
+        
+        #starting_time = self.get_starting_timestamp(context) if type(context) is datetime else None
+        
+        # Aircall API expects Epoch or Unix Timestamp vs ISO datetime
+        # get replication key from bookmark
+        
+        starting_time = self.get_starting_timestamp(context)
+        starting_unix_time = starting_time.timestamp()
+        
+        if starting_unix_time:
+            params["from"] = starting_unix_time
+        else:
+            #Unix Timestamp
+            params["from"] = time.time()
 
         return params
-
+    
     def prepare_request_payload(
             self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request.
-
         By default, no payload will be sent (return None).
         """
         # TODO: Delete this method if no payload is required. (Most REST APIs.)
