@@ -6,7 +6,7 @@ number_properties = PropertiesList(
     Property("direct_link", StringType, description="Direct API URL."),
     Property("name", StringType, description="The name of the Number."),
     Property("digits", StringType, description="International format of the Number."),
-    Property("created_at", StringType, description="Timestamp when the Number was created, in UTC."),
+    Property("created_at", DateTimeType, description="Timestamp when the Number was created, in UTC."),
     Property("country", StringType, description="ISO 3166-1 alpha-2 country code of the Number."),
     Property("time_zone", StringType, description="Number's time zone, set in the Dashboard."),
     Property("open", BooleanType, description="Current opening state of the Number, based on its opening hours."),
@@ -20,7 +20,7 @@ number_properties = PropertiesList(
         Property("direct_link", StringType, description="Direct API URL."),
         Property("name", StringType, description="Full name of the User. Results of first_name last_name."),
         Property("email", StringType, description="Email of the User."),
-        Property("created_at", StringType, description="Timestamp when the User was created, in UTC."),
+        Property("created_at", DateTimeType, description="Timestamp when the User was created, in UTC."),
         Property("available", BooleanType,
                  description="Current availability status of the User, based on their working hours."),
         Property("availability_status", StringType,
@@ -82,12 +82,13 @@ availability_properties = PropertiesList(
              description="Agent is performing their after-call work (tagging a call or wrapping up).")
 )
 
+# From https://developer.aircall.io/api-references/#team-overview
 teams_properties = PropertiesList(
     Property("id", IntegerType, required=True, description="Unique identifier for the Team."),
     Property("direct_link", StringType, description="Direct API URL."),
     Property("name", StringType,
              description="Full name of the Team. name must be unique in a company and the length of the string should 64 characters maximum."),
-    Property("created_at", StringType, description="Timestamp when the Team was created, in UTC."),
+    Property("created_at", DateTimeType, description="Timestamp when the Team was created, in UTC."),
     Property("users", ArrayType(user_properties), description="List of Users associated to this Team.")
 )
 
