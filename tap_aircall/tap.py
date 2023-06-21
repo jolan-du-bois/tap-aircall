@@ -8,13 +8,33 @@ from singer_sdk import typing as th  # JSON schema typing helpers
 from tap_aircall.streams import (
     CallsStream,
     UsersStream,
+    UserStream,
+    TeamsStream,
+    TeamStream,
+    CallStream,
+    NumbersStream,
+    NumberStream,
+    ContactsStream,
+    ContactStream,
+    TagsStream,
+    TagStream
 )
 from tap_aircall._tap import _Tap
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
     CallsStream,
+    CallStream,
     UsersStream,
+    UserStream,
+    TeamsStream,
+    TeamStream,
+    NumbersStream,
+    NumberStream,
+    ContactsStream,
+    ContactStream,
+    TagsStream,
+    TagStream
 ]
 
 
