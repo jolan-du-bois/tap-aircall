@@ -86,9 +86,9 @@ class aircallStream(RESTStream):
         # get replication key from bookmark
         
         starting_time = self.get_starting_timestamp(context)
-        starting_unix_time = starting_time.timestamp()
         
-        if starting_unix_time:
+        if starting_time:
+            starting_unix_time = starting_time.timestamp()
             params["from"] = starting_unix_time
         else:
             #Unix Timestamp
