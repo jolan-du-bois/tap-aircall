@@ -1,15 +1,17 @@
-from typing import List, Callable, Tuple
+# mypy: ignore-errors
+
+from pathlib import Path, PurePath
+from typing import Callable, List, Tuple
+
 import click
-
-from pathlib import Path
-
 from singer_sdk import Tap
+from singer_sdk.cli import common_options
 from singer_sdk.helpers._classproperty import classproperty
 from singer_sdk.tap_base import CliTestOptionValue
-from singer_sdk.cli import common_options
 
 CONFIG_OPTION = click.option(
-    "-c", "--config",
+    "-c",
+    "--config",
     multiple=True,
     help="Configuration file location or 'ENV' to use environment variables.",
     type=click.STRING,
@@ -42,10 +44,12 @@ PROPERTIES_OPTION = click.option(
     type=click.Path(),
 )
 STATE_OPTION = click.option(
-    "--state", "-s",
+    "--state",
+    "-s",
     help="Use a bookmarks file for incremental replication.",
     type=click.Path(),
 )
+
 
 class _Tap(Tap):
     """
@@ -57,6 +61,7 @@ class _Tap(Tap):
     2. --properties arg as the same as --catalog, but deprecated
         - If both are provided, --catalog arg is accepted first
     """
+
     @classproperty
     def cli(cls) -> Callable:
         """Execute standard CLI handler for taps.

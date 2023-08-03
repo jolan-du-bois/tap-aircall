@@ -2,23 +2,25 @@
 
 from typing import List
 
-from singer_sdk import Tap, Stream
+from singer_sdk import Stream, Tap
 from singer_sdk import typing as th  # JSON schema typing helpers
+
 # TODO: Import your custom stream types here:
 from tap_aircall.streams import (
     CallsStream,
-    UsersStream,
-    UserStream,
-    TeamsStream,
-    TeamStream,
     CallStream,
-    NumbersStream,
-    NumberStream,
     ContactsStream,
     ContactStream,
+    NumbersStream,
+    NumberStream,
     TagsStream,
-    TagStream
+    TagStream,
+    TeamsStream,
+    TeamStream,
+    UsersStream,
+    UserStream,
 )
+
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
@@ -39,6 +41,7 @@ STREAM_TYPES = [
 
 class Tapaircall(Tap):
     """aircall tap class."""
+
     name = "tap-aircall"
 
     # TODO: Update this section with the actual config values you expect:
@@ -47,18 +50,18 @@ class Tapaircall(Tap):
             "api_token",
             th.StringType,
             required=True,
-            description="The token to authenticate against the API service"
+            description="The token to authenticate against the API service",
         ),
         th.Property(
             "api_id",
             th.StringType,
             required=True,
-            description="The id to authenticate against the API service"
+            description="The id to authenticate against the API service",
         ),
         th.Property(
             "start_date",
             th.DateTimeType,
-            description="The earliest record date to sync"
+            description="The earliest record date to sync",
         ),
     ).to_dict()
 
