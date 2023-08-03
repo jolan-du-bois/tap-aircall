@@ -19,7 +19,6 @@ from tap_aircall.streams import (
     TagsStream,
     TagStream
 )
-from tap_aircall._tap import _Tap
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
@@ -38,7 +37,7 @@ STREAM_TYPES = [
 ]
 
 
-class Tapaircall(_Tap):
+class Tapaircall(Tap):
     """aircall tap class."""
     name = "tap-aircall"
 
