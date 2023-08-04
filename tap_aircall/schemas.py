@@ -101,6 +101,8 @@ contact_properties = PropertiesList(
     Property("description", StringType, description="Field used by Aircall to qualify tags."),
     Property("information", StringType, description="Extra information about the contact."),
     Property("is_shared", BooleanType, description="Contact can be shared within the organization."),
+    Property("created_at", DateTimeType, description="Timestamp when the Contact was created, in UTC."),
+    Property("updated_at", DateTimeType, description="Timestamp when the Contact was updated, in UTC."),
     Property("phone_numbers", ArrayType(
         ObjectType(
             Property("id", IntegerType, description="Unique identifier for this phone number."),

@@ -33,6 +33,8 @@ class aircallStream(RESTStream):
     records_jsonpath = "$[*]"  # Or override `parse_response`.
     next_page_token_jsonpath = "$.meta.next_page_link"  # Or override `get_next_page_token`.
 
+    post_process_datetime_types = []
+
     @property
     def authenticator(self) -> BasicAuthenticator:
         """Return a new authenticator object."""
@@ -100,10 +102,11 @@ class aircallStream(RESTStream):
         
         if starting_time:
             starting_unix_time = starting_time.timestamp()
-            params["from"] = starting_unix_time
+            params["from"]: int = int(starting_unix_time)
+            # params["after"]: int = int(starting_unix_time)
         else:
-            #Unix Timestamp
-            params["from"] = time.time()
+            # Unix Timestamp
+            params["from"]: int = int(time.time())
         return params
     
     def prepare_request_payload(
@@ -123,13 +126,14 @@ class aircallStream(RESTStream):
 
         yield from extract_jsonpath(self.records_jsonpath, input=response.json())
 
-    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+    def post_process(  # type: ignore
+        self, row: dict, context: Optional[dict]
+    ) -> Optional[dict]:
         """As needed, append or transform raw data to match expected structure."""
         # convert these values from type timestamp to datetime.
-        datetime_types = ["answered_at", "started_at", "ended_at"]
-        for key in datetime_types:
+        for key in self.post_process_datetime_types:
             if key in row and row.get(key):
-                row[key] = datetime.fromtimestamp(row.get(key))
+                row[key] = datetime.utcfromtimestamp(row.get(key))  # type: ignore
         return row
     
     """
