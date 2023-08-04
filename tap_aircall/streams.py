@@ -1,6 +1,6 @@
 """Stream type classes for tap-aircall."""
 
-from typing import Optional
+from typing import List, Optional
 
 from tap_aircall.client import aircallStream
 
@@ -41,7 +41,7 @@ class UserStream(aircallStream):
     schema = user_properties.to_dict()
     records_jsonpath = "$.users[*]"  # Or override `parse_response`.
     #  not to store any state bookmarks for the child stream
-    state_partitioning_keys: Optional[list[str]] = []
+    state_partitioning_keys: Optional[List[str]] = []
 
 
 class CallsStream(aircallStream):
@@ -79,7 +79,7 @@ class CallStream(aircallStream):
     schema = call_properties.to_dict()
     records_jsonpath = "$.call[*]"  # Or override `parse_response`.
     #  not to store any state bookmarks for the child stream
-    state_partitioning_keys: Optional[list[str]] = []
+    state_partitioning_keys: Optional[List[str]] = []
 
 
 class TeamsStream(aircallStream):
@@ -115,7 +115,7 @@ class TeamStream(aircallStream):
     schema = teams_properties.to_dict()
     records_jsonpath = "$.team[*]"  # Or override `parse_response`.
     #  not to store any state bookmarks for the child stream
-    state_partitioning_keys: Optional[list[str]] = []
+    state_partitioning_keys: Optional[List[str]] = []
 
 
 class NumbersStream(aircallStream):
@@ -151,7 +151,7 @@ class NumberStream(aircallStream):
     schema = number_properties.to_dict()
     records_jsonpath = "$.number[*]"  # Or override `parse_response`.
     #  not to store any state bookmarks for the child stream
-    state_partitioning_keys: Optional[list[str]] = []
+    state_partitioning_keys: Optional[List[str]] = []
 
 
 class ContactsStream(aircallStream):
@@ -187,7 +187,7 @@ class ContactStream(aircallStream):
     schema = contact_properties.to_dict()
     records_jsonpath = "$.contact[*]"  # Or override `parse_response`.
     #  not to store any state bookmarks for the child stream
-    state_partitioning_keys: Optional[list[str]] = []
+    state_partitioning_keys: Optional[List[str]] = []
 
 
 class TagsStream(aircallStream):
@@ -223,4 +223,4 @@ class TagStream(aircallStream):
     schema = tag_properties.to_dict()
     records_jsonpath = "$.tag[*]"  # Or override `parse_response`.
     #  not to store any state bookmarks for the child stream
-    state_partitioning_keys: Optional[list[str]] = []
+    state_partitioning_keys: Optional[List[str]] = []
