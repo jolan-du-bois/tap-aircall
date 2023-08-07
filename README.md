@@ -1,8 +1,40 @@
 # tap-aircall
 
-`tap-aircall` is a Singer tap for aircall.
+`tap-aircall` is a Singer tap for extracting data from the [aircall API](https://developer.aircall.io/api-references/).
 
 Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
+
+## Capabilities 
+
+- catalog
+- state 
+- discover 
+- about 
+- stream-maps
+- schema-flattening
+-  batch
+
+## Settings
+
+Setting | Required | Default | Description
+--- | --- | --- | --- 
+api_token | True | None | The token to authenticate against the API service
+api_id | True | None | The id to authenticate against the API service
+auth_token | False | None | The token to authenticate against the API service
+project_ids | False | None | Project IDs to replicate
+start_date | False | None | The earliest record date to sync in UTC Timezone
+api_url | False | https://api.mysample.com | The url for the API service
+stream_maps | False | None | Config object for stream maps capability. For more information check out [Stream Maps](https://sdk.meltano.com/en/latest/stream_maps.html)
+stream_map_config | False | None | User-defined config values to be used within map expressions
+flattening_max_depth | False | None | 'True' to enable schema flattening and automatically expand nested properties
+flattening_max_depth | False | None | The max depth to flatten schemas
+
+A full list of supported settings and capabilities for this
+tap is available by running:
+
+```bash
+poetry run tap-aircall --about
+```
 
 ## Installation
 
@@ -14,15 +46,21 @@ pipx install tap-aircall
 
 ## Configuration
 
-### Accepted Config Options
+### Authorization Method
 
-- [ ] `Developer TODO:` Provide a list of config options accepted by the tap.
+To run tap-aircall, you will need an API ID and an API token. Create a file named .secret/config.json and fill it with an array containing the following fields:
 
-A full list of supported settings and capabilities for this
-tap is available by running:
+- api_id
+- api_token
+- start_date
 
-```bash
-tap-aircall --about
+The config file should look like this:
+```json
+{
+    "api_id": "123456789",
+    "api_token": "ABCDEFGHI",
+    "start_date": "2023-08-07 09:30:00"
+  }
 ```
 
 ### Configure using environment variables
@@ -31,25 +69,28 @@ This Singer tap will automatically import any environment variables within the w
 `.env` if the `--config=ENV` is provided, such that config values will be considered if a matching
 environment variable is set either in the terminal context or in the `.env` file.
 
-### Source Authentication and Authorization
-
-- [ ] `Developer TODO:` If your tap requires special access on the source system, or any special authentication requirements, provide those here.
-
 ## Usage
 
 You can easily run `tap-aircall` by itself or in a pipeline using [Meltano](https://meltano.com/).
 
 ### Executing the Tap Directly
 
+You can launch the tap in two different ways:
+
+1. **catalog:** this option retrieves all data starting from the date specified in `.secrets/config.json` and updates the `samples/state.json` file with the latest retrieved item.
+
 ```bash
-tap-aircall --version
-tap-aircall --help
-tap-aircall --config CONFIG --discover > ./catalog.json
+./tap-aircall.sh catalog
+```
+
+2. **state:** this option retrieves all data starting from the state indicated in `samples/state.json`.
+
+
+```bash
+./tap-aricall.sh state
 ```
 
 ## Developer Resources
-
-- [ ] `Developer TODO:` As a first step, scan the entire project for the text "`TODO:`" and complete any recommended steps, deleting the "TODO" references once completed.
 
 ### Initialize your Development Environment
 
