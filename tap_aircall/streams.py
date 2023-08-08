@@ -132,7 +132,7 @@ class NumbersStream(aircallStream):
     name = "numbers"
     path = "v1/numbers"
     primary_keys = ["id"]
-    replication_key = "created_at"
+    # replication_key = "created_at"
     schema = number_properties.to_dict()
     records_jsonpath = "$.numbers[*]"  # Or override `parse_response`.
 
@@ -168,7 +168,7 @@ class ContactsStream(aircallStream):
     name = "contacts"
     path = "v1/contacts"
     primary_keys = ["id"]
-    replication_key = "created_at"
+    replication_key = "updated_at"
     schema = contact_properties.to_dict()
     records_jsonpath = "$.contacts[*]"  # Or override `parse_response`.
 
@@ -190,7 +190,7 @@ class ContactStream(aircallStream):
     path = "v1/contacts/{contact_id}"
 
     primary_keys = ["id"]
-    # replication_key = "created_at"
+    # replication_key = "updated_at"
     schema = contact_properties.to_dict()
     records_jsonpath = "$.contact[*]"  # Or override `parse_response`.
     #  not to store any state bookmarks for the child stream
