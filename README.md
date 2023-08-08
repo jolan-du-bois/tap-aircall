@@ -145,3 +145,7 @@ meltano elt tap-aircall target-jsonl
 
 See the [dev guide](https://sdk.meltano.com/en/latest/dev_guide.html) for more instructions on how to use the SDK to
 develop your own taps and targets.
+
+## Utilization 
+
+As explained above, this tap can be used in two different ways: `catalog` which retrieves all the data, and `state` which retrieves only the data since the last update. This second option allows fetching only the missing data every time the tap is run, making it a preferable choice. Nevertheless, it is important to note that any update made to an element in Aircall will not be considered when retrieving data via `state`. In other words, if one wishes to be able to retrieve all data, including updates, it is necessary to run the tap on the entire dataset every time. The only field for which there are no updates in the strictest sense (or at least no interesting updates to retrieve) is the 'Call' field. This field also happens to be the one containing the most data by far. Therefore, it is advised for the user to use `catalog` for the `User`, `Tag`, `Team`, `Contact`, and `Number` fields, but to use `state` for the `Call` field.
