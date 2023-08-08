@@ -144,5 +144,25 @@ See the [dev guide](https://sdk.meltano.com/en/latest/dev_guide.html) for more i
 develop your own taps and targets.
 
 ## Utilization 
+This tap can be used in three differents ways: 
+  * Any configuration: fetch all available data for each enable stream
+  * `start_date`: fetch data since this date according to the the replication date key 
+  * `state`: fetch data since the last update bookmarks according to the replication date key
 
-As explained above, this tap can be used in two different ways: `catalog` which retrieves all the data, and `state` which retrieves only the data since the last update. This second option allows fetching only the missing data every time the tap is run, making it a preferable choice. Nevertheless, it is important to note that any update made to an element in Aircall will not be considered when retrieving data via `state`. In other words, if one wishes to be able to retrieve all data, including updates, it is necessary to run the tap on the entire dataset every time. The only field for which there are no updates in the strictest sense (or at least no interesting updates to retrieve) is the 'Call' field. This field also happens to be the one containing the most data by far. Therefore, it is advised for the user to use `catalog` for the `User`, `Tag`, `Team`, `Contact`, and `Number` fields, but to use `state` for the `Call` field.
+Nevertheless, it is important to note that any update made to an element in Aircall will not be considered when retrieving data via `state`. This is because there is no replication key such as `updated_at`. In other words, if one wishes to be able to retrieve all data, including updates, it is necessary to run the tap on the entire dataset every time. The only stream for which there are no updates in the strictest sense (or at least no interesting updates to retrieve) is the *Call* stream. This stream also happens to be the one containing the most data by far.  
+Therefore, it is advised for the user to use full replication for the `Users`, `Tags`, `Teams`, `Contacts`, and `Numbers` streams, but to use `state` for the `Calls` stream.
+
+Streams | Replication Key | Documation URL | Enable
+--- | --- | --- | ---
+Users | created_at | [User overview](https://developer.aircall.io/api-references/#user-overview) | :heavy_check_mark:
+User | None | [User overview](https://developer.aircall.io/api-references/#user-overview) |
+Calls | started_at | [Call overview](https://developer.aircall.io/api-references/#call) | :heavy_check_mark:
+Call | started_at | [Call overview](https://developer.aircall.io/api-references/#call) |
+Teams | None | [Teams overview](https://developer.aircall.io/api-references/#team-overview) | :heavy_check_mark:
+Team | None | [Teams overview](https://developer.aircall.io/api-references/#team-overview) |
+Numbers | created_at | [Number overview](https://developer.aircall.io/api-references/#number-overview) | :heavy_check_mark:
+Number | None | [Number overview](https://developer.aircall.io/api-references/#number-overview) | :heavy_check_mark:
+Contacts | created_at | [Contact overview](https://developer.aircall.io/api-references/#contact-overview) | :heavy_check_mark:
+Contact | None | [Contact overview](https://developer.aircall.io/api-references/#contact-overview) |
+Tags | None | [Tag overview](https://developer.aircall.io/api-references/#tag-overview) | :heavy_check_mark:
+Tag | None | [Tag overview](https://developer.aircall.io/api-references/#tag-overview) |
