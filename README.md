@@ -20,10 +20,7 @@ Setting | Required | Default | Description
 --- | --- | --- | --- 
 api_token | True | None | The token to authenticate against the API service
 api_id | True | None | The id to authenticate against the API service
-auth_token | False | None | The token to authenticate against the API service
-project_ids | False | None | Project IDs to replicate
 start_date | False | None | The earliest record date to sync in UTC Timezone
-api_url | False | https://api.mysample.com | The url for the API service
 stream_maps | False | None | Config object for stream maps capability. For more information check out [Stream Maps](https://sdk.meltano.com/en/latest/stream_maps.html)
 stream_map_config | False | None | User-defined config values to be used within map expressions
 flattening_max_depth | False | None | 'True' to enable schema flattening and automatically expand nested properties

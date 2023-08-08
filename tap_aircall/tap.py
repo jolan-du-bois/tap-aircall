@@ -22,18 +22,18 @@ from tap_aircall.streams import (
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
-    CallsStream,
-    CallStream,
+    # CallsStream,
+    # CallStream,
     UsersStream,
     UserStream,
-    TeamsStream,
-    TeamStream,
-    NumbersStream,
-    NumberStream,
-    ContactsStream,
-    ContactStream,
-    TagsStream,
-    TagStream
+    # TeamsStream,
+    # TeamStream,
+    # NumbersStream,
+    # NumberStream,
+    # ContactsStream,
+    # ContactStream,
+    # TagsStream,
+    # TagStream
 ]
 
 
@@ -56,27 +56,9 @@ class Tapaircall(Tap):
             description="The id to authenticate against the API service"
         ),
         th.Property(
-            "auth_token",
-            th.StringType,
-            # required=True,
-            description="The token to authenticate against the API service"
-        ),
-        th.Property(
-            "project_ids",
-            th.ArrayType(th.StringType),
-            # required=True,
-            description="Project IDs to replicate"
-        ),
-        th.Property(
             "start_date",
             th.DateTimeType,
             description="The earliest record date to sync"
-        ),
-        th.Property(
-            "api_url",
-            th.StringType,
-            default="https://api.mysample.com",
-            description="The url for the API service"
         ),
     ).to_dict()
 
