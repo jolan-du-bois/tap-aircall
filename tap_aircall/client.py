@@ -3,7 +3,7 @@
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterable, Optional
+from typing import Any, Dict, Generator, Iterable, List, Optional
 from urllib.parse import parse_qsl
 
 import backoff
@@ -32,7 +32,7 @@ class aircallStream(RESTStream):
         "$.meta.next_page_link"  # Or override `get_next_page_token`.
     )
 
-    post_process_datetime_types: list[str] = []
+    post_process_datetime_types: List[str] = []
 
     @property
     def authenticator(self) -> BasicAuthenticator:

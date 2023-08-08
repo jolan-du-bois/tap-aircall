@@ -197,7 +197,7 @@ class ContactStream(aircallStream):
 
     post_process_datetime_types = ["created_at", "updated_at"]
 
-    state_partitioning_keys: Optional[list[str]] = []
+    state_partitioning_keys: Optional[List[str]] = []
 
 
 class TagsStream(aircallStream):
