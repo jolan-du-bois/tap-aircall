@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from typing import Any, Dict, Optional, Iterable, Callable, Generator
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import parse_qsl
 
 import requests
 import time
@@ -17,6 +17,14 @@ from singer_sdk.exceptions import RetriableAPIError
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
+from singer_sdk.pagination import BaseHATEOASPaginator
+
+class aircallPaginator(BaseHATEOASPaginator):
+    def get_next_url(self, response):
+        data = response.json()
+        return data.get("meta", {}).get("next_page_link")
+
+
 class aircallStream(RESTStream):
     """aircall stream class."""
 
@@ -24,6 +32,8 @@ class aircallStream(RESTStream):
 
     records_jsonpath = "$[*]"  # Or override `parse_response`.
     next_page_token_jsonpath = "$.meta.next_page_link"  # Or override `get_next_page_token`.
+
+    post_process_datetime_types = []
 
     @property
     def authenticator(self) -> BasicAuthenticator:
@@ -44,23 +54,26 @@ class aircallStream(RESTStream):
         # headers["Private-Token"] = self.config.get("auth_token")
         return headers
 
-    def get_next_page_token(
-            self, response: requests.Response, previous_token: Optional[Any]
-    ) -> Optional[Any]:
-        """Return a token for identifying next page or None if no more pages."""
-        # TODO: If pagination is required, return a token which can be used to get the
-        #       next page. If this is the final page, return "None" to end the
-        #       pagination loop.
-        if self.next_page_token_jsonpath:
-            all_matches = extract_jsonpath(
-                self.next_page_token_jsonpath, response.json()
-            )
-            first_match = next(iter(all_matches), None)
-            next_page_token = first_match
-        else:
-            next_page_token = response.headers.get("X-Next-Page", None)
-
-        return next_page_token
+    # Deprecated since v0.10.0
+    #def get_next_page_token(
+    #        self, response: requests.Response, previous_token: Optional[Any]
+    #) -> Optional[Any]:
+    #    """Return a token for identifying next page or None if no more pages."""
+    #    # TODO: If pagination is required, return a token which can be used to get the
+    #    #       next page. If this is the final page, return "None" to end the
+    #    #       pagination loop.
+    #    if self.next_page_token_jsonpath:
+    #        all_matches = extract_jsonpath(
+    #            self.next_page_token_jsonpath, response.json()
+    #        )
+    #        first_match = next(iter(all_matches), None)
+    #        next_page_token = first_match
+    #    else:
+    #        next_page_token = response.headers.get("X-Next-Page", None)
+#
+    #    return next_page_token
+    def get_new_paginator(self):
+        return aircallPaginator()
 
     def get_url_params(
             self, context: Optional[dict], next_page_token: Optional[Any]
@@ -68,12 +81,12 @@ class aircallStream(RESTStream):
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
         if next_page_token:
-            # format next_page_token: "https://api.aircall.io/v1/calls?page=2&per_page=20"
+            # format next_page_token: ParseResult(scheme='https', netloc='api.aircall.io', path='/v1/calls', params='', query='from=1691055000.0&order=asc&page=2&per_page=20', fragment='')
             # page & per_page require int params
             # extract query from next_page_token string
-            next_page_token_query: Dict = parse_qs(urlparse(next_page_token).query)
-            params["page"] = int(next_page_token_query.get('page', ['1'])[0])  # Default si 1
-            params["per_page"] = int(next_page_token_query.get('per_page', ['20'])[0])  # Default is 20
+            next_page_token_query: Dict = dict(parse_qsl(next_page_token.query))
+            params["page"] = int(next_page_token_query.get('page', '1'))  # Default is 1
+            params["per_page"] = int(next_page_token_query.get('per_page', '20'))  # Default is 20
         if self.replication_key:
             params["order"] = "asc"
             # params["order_by"] = self.replication_key
@@ -86,14 +99,14 @@ class aircallStream(RESTStream):
         # get replication key from bookmark
         
         starting_time = self.get_starting_timestamp(context)
-        starting_unix_time = starting_time.timestamp()
         
-        if starting_unix_time:
-            params["from"] = starting_unix_time
+        if starting_time:
+            starting_unix_time = starting_time.timestamp()
+            params["from"]: int = int(starting_unix_time)
+            # params["after"]: int = int(starting_unix_time)
         else:
-            #Unix Timestamp
-            params["from"] = time.time()
-
+            # Unix Timestamp
+            params["from"]: int = int(time.time())
         return params
     
     def prepare_request_payload(
@@ -113,13 +126,14 @@ class aircallStream(RESTStream):
 
         yield from extract_jsonpath(self.records_jsonpath, input=response.json())
 
-    def post_process(self, row: dict, context: Optional[dict]) -> dict:
+    def post_process(  # type: ignore
+        self, row: dict, context: Optional[dict]
+    ) -> Optional[dict]:
         """As needed, append or transform raw data to match expected structure."""
         # convert these values from type timestamp to datetime.
-        datetime_types = ["answered_at", "started_at", "ended_at"]
-        for key in datetime_types:
+        for key in self.post_process_datetime_types:
             if key in row and row.get(key):
-                row[key] = datetime.fromtimestamp(row.get(key))
+                row[key] = datetime.utcfromtimestamp(row.get(key))  # type: ignore
         return row
     
     """
@@ -141,7 +155,8 @@ class aircallStream(RESTStream):
     
     #https://developer.aircall.io/tutorials/logging-calls/#:~:text=Aircall%20Public%20API%20is%20rate,will%20be%20blocked%20by%20Aircall.
     #Aircall allows 60 requests per minute, generating a wait time of 90 seconds to avoid error caused by RateLimit exception
-    def backoff_wait_generator(max_time: int) -> Callable[..., Generator[int, Any, None]]:
+    def backoff_wait_generator(self) -> Callable[..., Generator[int, Any, None]]:
         return backoff.constant(interval=90)
     
-    
+    def backoff_max_tries(self):
+        return 2
