@@ -22,17 +22,17 @@ from tap_aircall.streams import (
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
-    # CallsStream,
+    CallsStream,
     # CallStream,
     UsersStream,
-    UserStream,
-    # TeamsStream,
+    # UserStream,
+    TeamsStream,
     # TeamStream,
-    # NumbersStream,
-    # NumberStream,
-    # ContactsStream,
+    NumbersStream,
+    NumberStream,
+    ContactsStream,
     # ContactStream,
-    # TagsStream,
+    TagsStream,
     # TagStream
 ]
 

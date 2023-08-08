@@ -23,18 +23,18 @@ class UsersStream(aircallStream):
         }
 
 
-class UserStream(aircallStream):
-    """Define custom stream."""
-    name = "user"
-    parent_stream_type = UsersStream
-    path = "v1/users/{user_id}"
+# class UserStream(aircallStream):
+#     """Define custom stream."""
+#     name = "user"
+#     parent_stream_type = UsersStream
+#     path = "v1/users/{user_id}"
 
-    primary_keys = ["id"]
-    # replication_key = "created_at"
-    schema = user_properties.to_dict()
-    records_jsonpath = "$.user[*]"  # Or override `parse_response`.
-    #  not to store any state bookmarks for the child stream
-    state_partitioning_keys = []
+#     primary_keys = ["id"]
+#     # replication_key = "created_at"
+#     schema = user_properties.to_dict()
+#     records_jsonpath = "$.user[*]"  # Or override `parse_response`.
+#     #  not to store any state bookmarks for the child stream
+#     state_partitioning_keys = []
 
 
 class CallsStream(aircallStream):
@@ -60,24 +60,24 @@ class CallsStream(aircallStream):
         }
 
 
-class CallStream(aircallStream):
-    """
-    Retrieve a Call data like duration, direction, status, timestamps, comments or tags…
-    https://developer.aircall.io/api-references/#retrieve-a-call
-    """
-    name = "call"
-    parent_stream_type = CallsStream
-    path = "v1/calls/{call_id}"
+# class CallStream(aircallStream):
+#     """
+#     Retrieve a Call data like duration, direction, status, timestamps, comments or tags…
+#     https://developer.aircall.io/api-references/#retrieve-a-call
+#     """
+#     name = "call"
+#     parent_stream_type = CallsStream
+#     path = "v1/calls/{call_id}"
 
-    primary_keys = ["id"]
-    replication_key = "started_at"
-    schema = call_properties.to_dict()
-    records_jsonpath = "$.call[*]"  # Or override `parse_response`.
-    #  not to store any state bookmarks for the child stream
+#     primary_keys = ["id"]
+#     replication_key = "started_at"
+#     schema = call_properties.to_dict()
+#     records_jsonpath = "$.call[*]"  # Or override `parse_response`.
+#     #  not to store any state bookmarks for the child stream
 
-    post_process_datetime_types = ["started_at", "answered_at", "ended_at"]
+#     post_process_datetime_types = ["started_at", "answered_at", "ended_at"]
 
-    state_partitioning_keys = []
+#     state_partitioning_keys = []
 
 
 class TeamsStream(aircallStream):
@@ -99,21 +99,21 @@ class TeamsStream(aircallStream):
         }
 
 
-class TeamStream(aircallStream):
-    """
-    Retrieve details of a specific Team.
-    https://developer.aircall.io/api-references/#retrieve-a-team
-    """
-    name = "team"
-    parent_stream_type = TeamsStream
-    path = "v1/teams/{team_id}"
+# class TeamStream(aircallStream):
+#     """
+#     Retrieve details of a specific Team.
+#     https://developer.aircall.io/api-references/#retrieve-a-team
+#     """
+#     name = "team"
+#     parent_stream_type = TeamsStream
+#     path = "v1/teams/{team_id}"
 
-    primary_keys = ["id"]
-    # replication_key = "created_at"
-    schema = teams_properties.to_dict()
-    records_jsonpath = "$.team[*]"  # Or override `parse_response`.
-    #  not to store any state bookmarks for the child stream
-    state_partitioning_keys = []
+#     primary_keys = ["id"]
+#     # replication_key = "created_at"
+#     schema = teams_properties.to_dict()
+#     records_jsonpath = "$.team[*]"  # Or override `parse_response`.
+#     #  not to store any state bookmarks for the child stream
+#     state_partitioning_keys = []
 
 
 class NumbersStream(aircallStream):
@@ -173,24 +173,24 @@ class ContactsStream(aircallStream):
         }
 
 
-class ContactStream(aircallStream):
-    """
-    Retrieve details of a specific Contact.
-    https://developer.aircall.io/api-references/#retrieve-a-contact
-    """
-    name = "contact"
-    parent_stream_type = ContactsStream
-    path = "v1/contacts/{contact_id}"
+# class ContactStream(aircallStream):
+#     """
+#     Retrieve details of a specific Contact.
+#     https://developer.aircall.io/api-references/#retrieve-a-contact
+#     """
+#     name = "contact"
+#     parent_stream_type = ContactsStream
+#     path = "v1/contacts/{contact_id}"
 
-    primary_keys = ["id"]
-    # replication_key = "created_at"
-    schema = contact_properties.to_dict()
-    records_jsonpath = "$.contact[*]"  # Or override `parse_response`.
-    #  not to store any state bookmarks for the child stream
+#     primary_keys = ["id"]
+#     # replication_key = "created_at"
+#     schema = contact_properties.to_dict()
+#     records_jsonpath = "$.contact[*]"  # Or override `parse_response`.
+#     #  not to store any state bookmarks for the child stream
 
-    post_process_datetime_types = ["created_at", "updated_at"]
+#     post_process_datetime_types = ["created_at", "updated_at"]
     
-    state_partitioning_keys = []
+#     state_partitioning_keys = []
 
 
 class TagsStream(aircallStream):
@@ -212,18 +212,18 @@ class TagsStream(aircallStream):
         }
 
 
-class TagStream(aircallStream):
-    """
-    Retrieve details of a specific Contact.
-    https://developer.aircall.io/api-references/#retrieve-a-contact
-    """
-    name = "tag"
-    parent_stream_type = TagsStream
-    path = "v1/tags/{tag_id}"
+# class TagStream(aircallStream):
+#     """
+#     Retrieve details of a specific Contact.
+#     https://developer.aircall.io/api-references/#retrieve-a-contact
+#     """
+#     name = "tag"
+#     parent_stream_type = TagsStream
+#     path = "v1/tags/{tag_id}"
 
-    primary_keys = ["id"]
-    # replication_key = "created_at"
-    schema = tag_properties.to_dict()
-    records_jsonpath = "$.tag[*]"  # Or override `parse_response`.
-    #  not to store any state bookmarks for the child stream
-    state_partitioning_keys = []
+#     primary_keys = ["id"]
+#     # replication_key = "created_at"
+#     schema = tag_properties.to_dict()
+#     records_jsonpath = "$.tag[*]"  # Or override `parse_response`.
+#     #  not to store any state bookmarks for the child stream
+#     state_partitioning_keys = []
