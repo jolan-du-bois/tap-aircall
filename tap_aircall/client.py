@@ -32,7 +32,7 @@ class aircallStream(RESTStream):
         "$.meta.next_page_link"  # Or override `get_next_page_token`.
     )
 
-    post_process_datetime_types = []
+    post_process_datetime_types: list[str] = []
 
     @property
     def authenticator(self) -> BasicAuthenticator:
@@ -104,11 +104,11 @@ class aircallStream(RESTStream):
 
         if starting_time:
             starting_unix_time = starting_time.timestamp()
-            params["from"]: int = int(starting_unix_time)
+            params["from"] = int(starting_unix_time)
             # params["after"]: int = int(starting_unix_time)
         else:
             # Unix Timestamp
-            params["from"]: int = int(time.time())
+            params["from"] = int(time.time())
         return params
 
     def prepare_request_payload(

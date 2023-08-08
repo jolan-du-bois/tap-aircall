@@ -167,7 +167,7 @@ class ContactsStream(aircallStream):
 
     name = "contacts"
     path = "v1/contacts"
-    primary_keys = ["id"]   
+    primary_keys = ["id"]
     replication_key = "created_at"
     schema = contact_properties.to_dict()
     records_jsonpath = "$.contacts[*]"  # Or override `parse_response`.
@@ -196,7 +196,7 @@ class ContactStream(aircallStream):
     #  not to store any state bookmarks for the child stream
 
     post_process_datetime_types = ["created_at", "updated_at"]
-    
+
     state_partitioning_keys: Optional[list[str]] = []
 
 

@@ -255,25 +255,61 @@ contact_properties = PropertiesList(
     Property("first_name", StringType, description="Contact's first name."),
     Property("last_name", StringType, description="Contact's last name."),
     Property("company_name", StringType, description="Contact's company name."),
-    Property("description", StringType, description="Field used by Aircall to qualify tags."),
-    Property("information", StringType, description="Extra information about the contact."),
-    Property("is_shared", BooleanType, description="Contact can be shared within the organization."),
-    Property("created_at", DateTimeType, description="Timestamp when the Contact was created, in UTC."),
-    Property("updated_at", DateTimeType, description="Timestamp when the Contact was updated, in UTC."),
-    Property("phone_numbers", ArrayType(
-        ObjectType(
-            Property("id", IntegerType, description="Unique identifier for this phone number."),
-            Property("label", StringType, description="A custom label like work, home..."),
-            Property("value", StringType, description="The raw phone number.")
-        )
-    ), description="Phone numbers of this contact."),
-    Property("emails", ArrayType(
-        ObjectType(
-            Property("id", IntegerType, description="Unique identifier for this email address."),
-            Property("label", StringType, description="A custom label like work, home..."),
-            Property("value", StringType, description="The email address.")
-        )
-    ), description="Email addresses of this contact.")
+    Property(
+        "description", StringType, description="Field used by Aircall to qualify tags."
+    ),
+    Property(
+        "information", StringType, description="Extra information about the contact."
+    ),
+    Property(
+        "is_shared",
+        BooleanType,
+        description="Contact can be shared within the organization.",
+    ),
+    Property(
+        "created_at",
+        DateTimeType,
+        description="Timestamp when the Contact was created, in UTC.",
+    ),
+    Property(
+        "updated_at",
+        DateTimeType,
+        description="Timestamp when the Contact was updated, in UTC.",
+    ),
+    Property(
+        "phone_numbers",
+        ArrayType(
+            ObjectType(
+                Property(
+                    "id",
+                    IntegerType,
+                    description="Unique identifier for this phone number.",
+                ),
+                Property(
+                    "label", StringType, description="A custom label like work, home..."
+                ),
+                Property("value", StringType, description="The raw phone number."),
+            )
+        ),
+        description="Phone numbers of this contact.",
+    ),
+    Property(
+        "emails",
+        ArrayType(
+            ObjectType(
+                Property(
+                    "id",
+                    IntegerType,
+                    description="Unique identifier for this email address.",
+                ),
+                Property(
+                    "label", StringType, description="A custom label like work, home..."
+                ),
+                Property("value", StringType, description="The email address."),
+            )
+        ),
+        description="Email addresses of this contact.",
+    ),
 )
 
 tag_properties = PropertiesList(
